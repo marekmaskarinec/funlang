@@ -1,0 +1,16 @@
+recursive factorial
+
+def fact
+	[
+		[@ : 0]->greater
+		fun [@ : [@ : 1]->sub->fact]->mul
+		fun 1
+	]->branch
+
+recursive fibonacci
+
+def fib
+		[[ @ : 1 ]->greater
+		fun [ [@ : 1]->sub->fib : [@ : 2]->sub->fib ]->add
+	  fun @
+]->branch
