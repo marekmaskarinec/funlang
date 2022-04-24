@@ -49,7 +49,7 @@ func (ev *Eval) builtin(name string, arg, funArg Value) (Value, error) {
 			return nil, fmt.Errorf("type error")
 		}
 
-		for i:=1; i < len(arr); i++ {
+		for i := 1; i < len(arr); i++ {
 			n, ok := arr[i].(int)
 			if !ok {
 				return nil, fmt.Errorf("type error")
@@ -75,7 +75,7 @@ func (ev *Eval) builtin(name string, arg, funArg Value) (Value, error) {
 			return nil, fmt.Errorf("type error")
 		}
 
-		for i:=1; i < len(arr); i++ {
+		for i := 1; i < len(arr); i++ {
 			n, ok := arr[i].(int)
 			if !ok {
 				return nil, fmt.Errorf("type error")
@@ -89,7 +89,7 @@ func (ev *Eval) builtin(name string, arg, funArg Value) (Value, error) {
 		}
 
 		return sum, nil
-	
+
 	case "add":
 		arr, ok := arg.([]Value)
 		if !ok {
@@ -102,7 +102,7 @@ func (ev *Eval) builtin(name string, arg, funArg Value) (Value, error) {
 
 		sum := 0
 
-		for i:=0; i < len(arr); i++ {
+		for i := 0; i < len(arr); i++ {
 			n, ok := arr[i].(int)
 			if !ok {
 				return nil, fmt.Errorf("type error")
@@ -128,7 +128,7 @@ func (ev *Eval) builtin(name string, arg, funArg Value) (Value, error) {
 			return nil, fmt.Errorf("type error")
 		}
 
-		for i:=1; i < len(arr); i++ {
+		for i := 1; i < len(arr); i++ {
 			n, ok := arr[i].(int)
 			if !ok {
 				return nil, fmt.Errorf("type error")

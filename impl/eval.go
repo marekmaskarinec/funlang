@@ -55,7 +55,11 @@ func (ev *Eval) expression(ast Node, arg, funArg Value) (Value, error) {
 
 		if isBuiltin(string(ast.value.value)) {
 			val, err := ev.builtin(string(ast.value.value), arg, funArg)
-			return val, ast.value.errorf("%w", err)
+			if err != nil {
+				err = ast.value.errorf("%w", err)
+			}
+
+			return val, err
 		} else if node, exists := ev.defs[string(ast.value.value)]; exists {
 			return ev.expression(node, arg, arg)
 		}

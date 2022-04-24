@@ -35,10 +35,10 @@ type Token struct {
 }
 
 func (t *Token) errorf(format string, args ...interface{}) error {
-	argss := make([]interface{}, len(args) + 2)
+	argss := make([]interface{}, len(args)+2)
 	argss[0] = t.loc.line
 	argss[1] = t.loc.column
-	for i,arg := range args {
+	for i, arg := range args {
 		argss[i+2] = arg
 	}
 

@@ -28,6 +28,15 @@ func (p *Parser) arrayLiteral() (Node, error) {
 		ast.children = append(ast.children, node)
 
 		p.accept()
+		if p.token.kind == kindEOF {
+			return ast, p.token.errorf("Unended array literal.")
+		}
+
+		if val, _ := p.lexer.peek();
+		   p.token.kind == kindLF && val.kind == kindArrayEnd {
+			p.accept()
+		}
+
 		if p.token.kind != kindArraySep &&
 			p.token.kind != kindLF &&
 			p.token.kind != kindArrayEnd {

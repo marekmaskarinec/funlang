@@ -8,7 +8,14 @@ import (
 func main() {
 	lex := Lexer{
 		buf: []rune(
-`[2  0]->div`),
+			`def fib
+	[
+		[ @ : 1 ]->greater
+		fun [ [@ : 1]->sub->fib : [@ : 2]->sub->fib ]->add
+		fun @
+	]->branch
+
+8->fib->print`),
 	}
 
 	fmt.Println("input:", string(lex.buf))
