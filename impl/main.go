@@ -15,7 +15,7 @@ func main() {
 		fun @
 	]->branch
 
-8->fib->print`),
+36->fib->print`),
 	}
 
 	fmt.Println("input:", string(lex.buf))

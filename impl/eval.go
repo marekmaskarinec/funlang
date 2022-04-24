@@ -21,14 +21,14 @@ type Eval struct {
 func (ev *Eval) expression(ast Node, arg, funArg Value) (Value, error) {
 	switch ast.value.kind {
 	case kindArrayStart:
-		arr := []Value{}
+		arr := make([]Value, len(ast.children))
 		for i := 0; i < len(ast.children); i++ {
 			val, err := ev.expression(ast.children[i], arg, funArg)
 			if err != nil {
 				return ast, err
 			}
 
-			arr = append(arr, val)
+			arr[i] = val
 		}
 
 		return arr, nil
@@ -48,21 +48,18 @@ func (ev *Eval) expression(ast Node, arg, funArg Value) (Value, error) {
 		return ast.value.toInt()
 
 	case kindIdent:
-		// function evaluates to itself
-		if string(ast.value.value) == "fun" {
+		if ast.value.value == "fun" {
 			return ast.children[0], nil
-		}
-
-		if isBuiltin(string(ast.value.value)) {
-			val, err := ev.builtin(string(ast.value.value), arg, funArg)
+		} else if node, exists := ev.defs[ast.value.value]; exists {
+			return ev.expression(node, arg, arg)
+		} else {
+			val, err := ev.builtin(ast.value.value, arg, funArg)
 			if err != nil {
 				err = ast.value.errorf("%w", err)
 			}
 
 			return val, err
-		} else if node, exists := ev.defs[string(ast.value.value)]; exists {
-			return ev.expression(node, arg, arg)
-		}
+		} 
 
 	case kindRef:
 		arr, err := ev.expression(ast.children[0], arg, funArg)

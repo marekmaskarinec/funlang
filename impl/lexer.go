@@ -56,41 +56,41 @@ func (l *Lexer) next() (Token, error) {
 	switch l.peekc() {
 	case '[':
 		l.nextc()
-		tok.value = []rune{'['}
+		tok.value = "["
 		tok.kind = kindArrayStart
 	case ']':
 		l.nextc()
-		tok.value = []rune{']'}
+		tok.value = "]"
 		tok.kind = kindArrayEnd
 	case ':':
 		l.nextc()
-		tok.value = []rune{':'}
+		tok.value = ":"
 		tok.kind = kindArraySep
 	case '@':
 		l.nextc()
-		tok.value = []rune{'@'}
+		tok.value = "@"
 		tok.kind = kindArgSubst
 	case '!':
 		l.nextc()
-		tok.value = []rune{'!'}
+		tok.value = "!"
 		tok.kind = kindRef
 	case '\n':
 		l.nextc()
-		tok.value = []rune("LF")
+		tok.value = "LF"
 		tok.kind = kindLF
 	case '(':
 		l.nextc()
-		tok.value = []rune("(")
+		tok.value = "("
 		tok.kind = kindParOpen
 	case ')':
 		l.nextc()
-		tok.value = []rune(")")
+		tok.value = ")"
 		tok.kind = kindParClose
 	case '-':
 		l.nextc()
 		if l.peekc() == '>' {
 			tok.kind = kindChainOperator
-			tok.value = []rune("->")
+			tok.value = "->"
 			l.nextc()
 		} else {
 			return tok, fmt.Errorf("- expected.")
@@ -113,7 +113,7 @@ func (l *Lexer) next() (Token, error) {
 			tok.kind = kindIdent
 		}
 
-		tok.value = l.buf[start:l.loc.index]
+		tok.value = string(l.buf[start:l.loc.index])
 	}
 
 	return tok, nil

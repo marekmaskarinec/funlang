@@ -31,7 +31,7 @@ type TokenKind int
 type Token struct {
 	kind  TokenKind
 	loc   Location
-	value []rune
+	value string
 }
 
 func (t *Token) errorf(format string, args ...interface{}) error {

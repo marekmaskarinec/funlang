@@ -32,8 +32,7 @@ func (p *Parser) arrayLiteral() (Node, error) {
 			return ast, p.token.errorf("Unended array literal.")
 		}
 
-		if val, _ := p.lexer.peek();
-		   p.token.kind == kindLF && val.kind == kindArrayEnd {
+		if val, _ := p.lexer.peek(); p.token.kind == kindLF && val.kind == kindArrayEnd {
 			p.accept()
 		}
 
@@ -41,8 +40,8 @@ func (p *Parser) arrayLiteral() (Node, error) {
 			p.token.kind != kindLF &&
 			p.token.kind != kindArrayEnd {
 
-			return ast, p.token.errorf("Expected an array delimeter or an array end, got %s.",
-				string(p.token.value))
+			return ast, p.token.errorf(
+				"Expected an array delimeter or an array end, got %s.", p.token.value)
 		}
 	}
 
@@ -77,7 +76,7 @@ func (p *Parser) expression() (Node, error) {
 
 	ast := Node{}
 	p.accept()
-	if string(p.token.value) == "fun" {
+	if p.token.value == "fun" {
 		ast.value = p.token
 		node, err := p.expression()
 		if err != nil {
@@ -86,7 +85,7 @@ func (p *Parser) expression() (Node, error) {
 
 		ast.children = append(ast.children, node)
 
-	} else if string(p.token.value) == "def" {
+	} else if p.token.value == "def" {
 		if err := p.accept(); err != nil {
 			return ast, p.token.errorf("%w", err)
 		}
@@ -95,7 +94,7 @@ func (p *Parser) expression() (Node, error) {
 			return ast, p.token.errorf("Expected an identifier, got %d", p.token.kind)
 		}
 
-		name := string(p.token.value)
+		name := p.token.value
 		// make sure the identifier exists when evaluating
 		p.defs[name] = Node{}
 		var err error
@@ -104,14 +103,14 @@ func (p *Parser) expression() (Node, error) {
 			return ast, err
 		}
 
-	} else if string(p.token.value) == "[" {
+	} else if p.token.value == "[" {
 		var err error
 		ast, err = p.arrayLiteral()
 		if err != nil {
 			return ast, err
 		}
 
-	} else if string(p.token.value) == "(" {
+	} else if p.token.value == "(" {
 		var err error
 		ast, err = p.parenthesis()
 		if err != nil {
@@ -119,8 +118,8 @@ func (p *Parser) expression() (Node, error) {
 		}
 
 	} else if p.token.kind == kindIdent {
-		if !p.isDefined(string(p.token.value)) && !isBuiltin(string(p.token.value)) {
-			return ast, p.token.errorf("Unknown identifier %s.", string(p.token.value))
+		if !p.isDefined(p.token.value) && !isBuiltin(p.token.value) {
+			return ast, p.token.errorf("Unknown identifier %s.", p.token.value)
 		}
 
 		ast.value = p.token
@@ -130,14 +129,14 @@ func (p *Parser) expression() (Node, error) {
 		ast.value = p.token
 	}
 
-	if token, _ := p.lexer.peek(); string(token.value) == "-" {
+	if token, _ := p.lexer.peek(); token.value == "-" {
 		p.accept()
 		return ast, nil
 	}
 
 	for {
 		token, _ := p.lexer.peek()
-		if string(token.value) != "->" && string(token.value) != "!" {
+		if token.value != "->" && token.value != "!" {
 			break
 		}
 
