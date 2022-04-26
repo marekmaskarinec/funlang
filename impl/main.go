@@ -1,44 +1,67 @@
 package main
 
 import (
+	"flag"
 	"fmt"
+	"io"
 	"os"
 )
 
+var (
+	replFlag = flag.Bool("repl", false, "Runs the funlang REPL")
+	astFlag  = flag.Bool("ast", false, "Prints the AST to stderr. (debug)")
+)
+
 func main() {
-	lex := Lexer{
-		buf: []rune(
-			`def fib
-	[
-		[ @ : 1 ]->greater
-		fun [ [@ : 1]->sub->fib : [@ : 2]->sub->fib ]->add
-		fun @
-	]->branch
-
-36->fib->print`),
+	flag.Parse()
+	args := flag.Args()
+	if len(args) == 0 {
+		*replFlag = true
 	}
 
-	fmt.Println("input:", string(lex.buf))
+	ev := Eval{defs: map[string]Node{}}
+	code := []Node{}
 
-	par := Parser{
-		lexer: lex,
-		defs:  map[string]Node{},
+	for i := 0; i < len(args); i++ {
+		file, err := os.Open(args[i])
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "File %s doesn't exist.\n", args[i])
+			return
+		}
+
+		b, err := io.ReadAll(file)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Could not read %s's content.\n", args[i])
+			return
+		}
+
+		par := Parser{
+			lexer: Lexer{buf: []rune(string(b))},
+			defs:  ev.defs,
+		}
+
+		ast, err := par.topLevel()
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "%s: error: %v\n", err)
+		}
+
+		if *astFlag {
+			fmt.Fprintf(os.Stderr, "%s\n", ast.toString(0))
+		}
+
+		ev.defs = par.defs
+
+		code = append(code, ast)
 	}
 
-	ast, err := par.topLevel()
-	fmt.Println("ast:")
-	fmt.Println(ast.toString(0))
-	if err != nil {
-		fmt.Println(err)
+	for i := 0; i < len(code); i++ {
+		_, err := ev.expression(code[i], 0, 0)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "%s runtime error: %v", args[i], err)
+		}
 	}
 
-	ev := Eval{
-		defs: par.defs,
-	}
-
-	fmt.Println("output:")
-	_, err = ev.expression(ast, 2, 2)
-	if err != nil {
-		fmt.Fprintln(os.Stdout, err)
+	if *replFlag {
+		runRepl(ev)
 	}
 }

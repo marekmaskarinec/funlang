@@ -1,0 +1,6 @@
+def fib
+	[
+		[ @ : 1 ]->greater
+		fun [ [@ : 1]->sub->fib : [@ : 2]->sub->fib ]->add
+		fun @
+	]->branch

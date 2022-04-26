@@ -59,7 +59,7 @@ func (ev *Eval) expression(ast Node, arg, funArg Value) (Value, error) {
 			}
 
 			return val, err
-		} 
+		}
 
 	case kindRef:
 		arr, err := ev.expression(ast.children[0], arg, funArg)
